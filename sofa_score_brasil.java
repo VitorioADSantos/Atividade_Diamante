@@ -75,6 +75,25 @@ public class sofa_score_brasil {
             
             index++; 
         }
+
+        public static String definirCategoria(int pontos) {
+        
+        int faixa;
+        if (pontos >= 20) faixa = 1;
+        else if (pontos >= 14) faixa = 2;
+        else if (pontos >= 8) faixa = 3;
+        else if (pontos >= 4) faixa = 4;
+        else faixa = 5;
+
+        switch (faixa) {
+            case 1: return "LÍDER";
+            case 2: return "G4";
+            case 3: return "MEIO DE TABELA";
+            case 4: return "ALERTA";
+            case 5: return "REBAIXAMENTO";
+            default: return "";
+        }
+    }
         
             
        
