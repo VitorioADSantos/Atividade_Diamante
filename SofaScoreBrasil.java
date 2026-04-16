@@ -1,45 +1,49 @@
-import java.sql.Time;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class sofa_score_brasil {
-    public static void main(String[] args) {
-        String[] partidas = {
-                "Flamengo:3:1:Palmeiras",
-                "Corinthians:0:0:São Paulo",
-                "Atletico-MG:2:2:Fluminense",
-                "Palmeiras:1:0:Corinthians",
-                "São Paulo:3:2:Flamengo",
-                "Fluminense:0:1:Atletico-MG",
-                "Flamengo:2:0:Corinthians",
-                "Palmeiras:4:1:Fluminense",
-                "São Paulo:0:0:Atletico-MG",
-                "Corinthians:1:3:Fluminense",
-                "Atletico-MG:0:2:Flamengo",
-                "Fluminense:1:1:São Paulo"
-        };
+public class SofaScoreBrasil {
 
-        public static String[] parsearPartida(String linha) {
-        
-        String[] partes = linha.split(":");
-        
-        if (partes.length != 4) {
-            System.out.println("[ERRO] Linha inválida: " + linha);
-            return null;
-        }
+    static class Time {
+        String nome;
+        int pontos, vitorias, empates, derrotas, golsPro, golsContra;
 
-        String timeCasa = partes[0].trim().toUpperCase();
-        String golsCasa = partes[1].trim();
-        String golsFora = partes[2].trim();
-        String timeFora = partes[3].trim().toUpperCase();
-
-        if (timeCasa.isEmpty() || timeFora.isEmpty() || golsCasa.isEmpty() || golsFora.isEmpty()) {
-            System.out.println("[ERRO] Linha inválida: " + linha);
-            return null;
-        }
-
-        return new String[]{timeCasa, golsCasa, golsFora, timeFora};
+        public Time(String nome) { this.nome = nome; }
+        public int getSaldoGols() { return golsPro - golsContra; }
+        public int getPontos() { return pontos; }
+        public int getGolsPro() { return golsPro; }
+        public String getNome() { return nome; }
     }
 
-    int index = 0;
+    public static void main(String[] args) {
+        String[] partidas = {
+            "Flamengo:3:1: Palmeiras",
+            "Corinthians:0:0:São Paulo",
+            "Atletico-MG:2:2:Fluminense",
+            "Palmeiras: 1:0: Corinthians",
+            "São Paulo:3:2: Flamengo",
+            "Fluminense:0:1: Atletico-MG",
+            "Flamengo:2:0: Corinthians",
+            "Palmeiras:4:1: Fluminense",
+            "São Paulo:0:0: Atletico-MG",
+            "Corinthians:1:3: Fluminense",
+            "Atletico-MG:0:2:Flamengo",
+            "Fluminense:1:1:São Paulo"
+        };
+
+        Map<String, Time> times = new HashMap<>();
+        List<String[]> partidasValidas = new ArrayList<>();
+
+
+        for (int i = 0; i < partidas.length; i++) {
+            String[] dados = parsearPartida(partidas[i]);
+            
+            if (dados != null) {
+                partidasValidas.add(dados);
+            }
+        }
+
+
+        int index = 0;
         while (index < partidasValidas.size()) {
             String[] dados = partidasValidas.get(index);
             String nomeCasa = dados[0];
@@ -76,26 +80,8 @@ public class sofa_score_brasil {
             index++; 
         }
 
-        public static String definirCategoria(int pontos) {
-        
-        int faixa;
-        if (pontos >= 20) faixa = 1;
-        else if (pontos >= 14) faixa = 2;
-        else if (pontos >= 8) faixa = 3;
-        else if (pontos >= 4) faixa = 4;
-        else faixa = 5;
 
-        switch (faixa) {
-            case 1: return "LÍDER";
-            case 2: return "G4";
-            case 3: return "MEIO DE TABELA";
-            case 4: return "ALERTA";
-            case 5: return "REBAIXAMENTO";
-            default: return "";
-        }
-    }
-
-     System.out.println("=== ANÁLISE COM STREAMS ===");
+        System.out.println("=== ANÁLISE COM STREAMS ===");
         
         Time maisGols = times.values().stream()
             .max(Comparator.comparingInt(Time::getGolsPro))
@@ -135,10 +121,46 @@ public class sofa_score_brasil {
                 System.out.println(String.format("%-3d | %-13s | %-3d | %-3d | %-3d | %-3d | %-4s | %s",
                     posicao[0]++, t.getNome(), t.getPontos(), t.vitorias, t.empates, t.derrotas, saldo, categoria));
             });
+    }
+
+    public static String[] parsearPartida(String linha) {
         
-            
-       
+        String[] partes = linha.split(":");
+        
+        if (partes.length != 4) {
+            System.out.println("[ERRO] Linha inválida: " + linha);
+            return null;
+        }
 
+        String timeCasa = partes[0].trim().toUpperCase();
+        String golsCasa = partes[1].trim();
+        String golsFora = partes[2].trim();
+        String timeFora = partes[3].trim().toUpperCase();
 
+        if (timeCasa.isEmpty() || timeFora.isEmpty() || golsCasa.isEmpty() || golsFora.isEmpty()) {
+            System.out.println("[ERRO] Linha inválida: " + linha);
+            return null;
+        }
+
+        return new String[]{timeCasa, golsCasa, golsFora, timeFora};
+    }
+
+    public static String definirCategoria(int pontos) {
+        
+        int faixa;
+        if (pontos >= 20) faixa = 1;
+        else if (pontos >= 14) faixa = 2;
+        else if (pontos >= 8) faixa = 3;
+        else if (pontos >= 4) faixa = 4;
+        else faixa = 5;
+
+        switch (faixa) {
+            case 1: return "LÍDER";
+            case 2: return "G4";
+            case 3: return "MEIO DE TABELA";
+            case 4: return "ALERTA";
+            case 5: return "REBAIXAMENTO";
+            default: return "";
+        }
     }
 }
