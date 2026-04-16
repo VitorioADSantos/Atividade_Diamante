@@ -1,3 +1,5 @@
+import java.sql.Time;
+
 public class sofa_score_brasil {
     public static void main(String[] args) {
         String[] partidas = {
@@ -36,6 +38,43 @@ public class sofa_score_brasil {
 
         return new String[]{timeCasa, golsCasa, golsFora, timeFora};
     }
+
+    int index = 0;
+        while (index < partidasValidas.size()) {
+            String[] dados = partidasValidas.get(index);
+            String nomeCasa = dados[0];
+            int golsCasa = Integer.parseInt(dados[1]);
+            int golsFora = Integer.parseInt(dados[2]);
+            String nomeFora = dados[3];
+
+            times.putIfAbsent(nomeCasa, new Time(nomeCasa));
+            times.putIfAbsent(nomeFora, new Time(nomeFora));
+
+            Time timeCasa = times.get(nomeCasa);
+            Time timeFora = times.get(nomeFora);
+
+            timeCasa.golsPro += golsCasa;
+            timeCasa.golsContra += golsFora;
+            timeFora.golsPro += golsFora;
+            timeFora.golsContra += golsCasa;
+
+            if (golsCasa > golsFora) {
+                timeCasa.pontos += 3;
+                timeCasa.vitorias += 1;
+                timeFora.derrotas += 1;
+            } else if (golsCasa < golsFora) {
+                timeFora.pontos += 3;
+                timeFora.vitorias += 1;
+                timeCasa.derrotas += 1;
+            } else {
+                timeCasa.pontos += 1;
+                timeFora.pontos += 1;
+                timeCasa.empates += 1;
+                timeFora.empates += 1;
+            }
+            
+            index++; 
+        }
         
             
        
