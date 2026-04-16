@@ -94,6 +94,47 @@ public class sofa_score_brasil {
             default: return "";
         }
     }
+
+     System.out.println("=== ANÁLISE COM STREAMS ===");
+        
+        Time maisGols = times.values().stream()
+            .max(Comparator.comparingInt(Time::getGolsPro))
+            .orElse(null);
+        System.out.println("- Mais gols marcados: " + (maisGols != null ? maisGols.getNome() : ""));
+
+        double mediaGols = partidasValidas.stream()
+            .mapToInt(p -> Integer.parseInt(p[1]) + Integer.parseInt(p[2]))
+            .average()
+            .orElse(0.0);
+        System.out.printf("- Média de gols por partida: %.2f\n", mediaGols);
+
+        List<String> rebaixados = times.values().stream()
+            .filter(t -> t.getPontos() < 4)
+            .map(Time::getNome)
+            .collect(Collectors.toList());
+        System.out.println("- Zona de rebaixamento: " + rebaixados + "\n");
+
+
+        System.out.println("=== CAMPEONATO BRASILEIRO 2026 ===");
+        
+        System.out.println(String.format("%-3s | %-13s | %-3s | %-3s | %-3s | %-3s | %-4s | %s", 
+            "POS", "TIME", "PTS", "V", "E", "D", "SG", "CATEGORIA"));
+        
+        int[] posicao = {1};
+
+        
+        times.values().stream()
+            .sorted(Comparator.comparingInt(Time::getPontos).reversed()
+                .thenComparingInt(Time::getSaldoGols).reversed())
+            .forEach(t -> {
+               
+                String saldo = t.getSaldoGols() > 0 ? "+" + t.getSaldoGols() : String.valueOf(t.getSaldoGols());
+                
+                String categoria = definirCategoria(t.getPontos());
+                
+                System.out.println(String.format("%-3d | %-13s | %-3d | %-3d | %-3d | %-3d | %-4s | %s",
+                    posicao[0]++, t.getNome(), t.getPontos(), t.vitorias, t.empates, t.derrotas, saldo, categoria));
+            });
         
             
        
